@@ -1,10 +1,7 @@
 package MyCollection;
 
 import java.lang.annotation.ElementType;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class MyArraylist<E> implements List<E>{
     private int size;
@@ -22,27 +19,32 @@ public class MyArraylist<E> implements List<E>{
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return (size==0);
     }
 
     @Override
-    public boolean contains(Object o) {
-        return false;
+    public boolean contains(Object o) {//是否包含某个元素
+        int index=indexOf(o);
+        if(index==-1)
+            return false;
+        return true;
     }
 
     @Override
     public Iterator<E> iterator() {
-        return null;
+        //我理解的意思是先copy成一个数组再转化成iterator
+        E[] copy= Arrays.copyOf(array,size);
+        return Arrays.asList(copy).iterator();
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return Arrays.copyOf(array,size);
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return null;
+        throw new UnsupportedOperationException();//扔出异常来处理吧
     }
 
     @Override
@@ -54,8 +56,7 @@ public class MyArraylist<E> implements List<E>{
             array=bigger;
             bigger=null;
         }
-        array[size]=e;
-        ++size;
+        array[size++]=e;
         return true;
     }
 
@@ -88,17 +89,25 @@ public class MyArraylist<E> implements List<E>{
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        for(int i=size-1;i>=0;--i)
+        {
+            if(array[i].equals(o))//如果两个对象之间相等了
+                return i;
+        }
+        return -1;
     }
 
     @Override
     public ListIterator<E> listIterator() {
-        return null;
+        //我理解的意思是先copy成一个数组再转化成listiterator
+        E[] copy= Arrays.copyOf(array,size);
+        return Arrays.asList(copy).listIterator();
     }
 
     @Override
     public ListIterator<E> listIterator(int index) {
-        return null;
+        E[] copy=Arrays.copyOf(array,size);
+        return Arrays.asList(copy).listIterator(index);
     }
 
     @Override
@@ -134,37 +143,58 @@ public class MyArraylist<E> implements List<E>{
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        int index=indexOf(o);
+        if(index==-1)
+            return false;
+        else
+            remove(index);
+        return true;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        for(Object o:c)
+        {
+            if(!contains(o))
+                return false;
+        }
+        return true;
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return false;
+        boolean flag=true;
+        for(E o:c)
+         {
+             flag&=add(o);
+         }
+         return flag;
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        boolean flag=true;
+        for(Object o:c)
+        {
+            flag&=remove(o);
+        }
+        return flag;//只要有一个不成功就不行
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void clear() {
-
+        size=0;
+        array=null;
     }
 
     private boolean equals(Object target, Object element)//用于类内部的一个对象的比较，不属于接口的功能
